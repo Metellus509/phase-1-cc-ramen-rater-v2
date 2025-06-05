@@ -17,31 +17,46 @@ const handleClick = (ramen) => {
 
 const addSubmitListener = () => {
   // Add code
-  const form=document.querySelector("#new-ramen")
-  const name=document.querySelector("#new-name")
-  const restaurant=document.querySelector("#new-restaurant")
-  const image=document.querySelector("#new-image")
-  const rating=document.querySelector("#new-rating")
-  const textarea=document.querySelector("#new-comment")
-  form.addEventListener("submit",(event)=>{
-      event.preventDefault()
-      fetch("http://localhost:3000/ramens",{
-        method:"POST",
-        body:JSON.stringify({
-            name: name.value,
-            restaurant: restaurant.value,
-            image: image.value,
-            rating: rating.value,
-            comment: textarea.value
-        })
+  const form = document.querySelector("#new-ramen");
+  const name = document.querySelector("#new-name");
+  const restaurant = document.querySelector("#new-restaurant");
+  const image = document.querySelector("#new-image");
+  const rating = document.querySelector("#new-rating");
+  const textarea = document.querySelector("#new-comment");
+
+  if (form) {
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const newRamen = {
+        name: name.value,
+        restaurant: restaurant.value,
+        image: image.value,
+        rating: rating.value,
+        comment: textarea.value,
+      };
+
+      fetch("http://localhost:3000/ramens", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newRamen),
       })
-      .catch(()=>{
+      .catch(() => {
         alert("Fetch error is generated")
-      })
+      });
 
-      console.log(name.value)
-  })
+      
+      const menu = document.querySelector("#ramen-menu");
+      const img = document.createElement("img");
+      img.src = newRamen.image;
+      img.addEventListener("click", () => handleClick(newRamen));
+      menu.appendChild(img);
 
+      form.reset();
+    });
+  }
 }
 
 const displayRamens = () => {
@@ -54,7 +69,9 @@ const displayRamens = () => {
         //console.log(url.image)
         const img=document.createElement("img")
         img.src=url.image
-        menu.appendChild(img)
+        if (menu) {
+        menu.appendChild(img);
+        }
         img.addEventListener("click",()=>handleClick(url))
     })
   })
